@@ -6,9 +6,10 @@ shinyServer(function(input, output, session) {
     
     swarmOuts = reactiveValues()
     previousButtonCounts = reactiveVal(list())
-    
+    initialText = reactiveVal('Written by Ogan Mancarci\nSource code at github.com/oganm/swarm\nMonster data is released by Wizards of the Coast\nunder open game license\nData is translated into JSON format by Walter Kammerer\n ')
     # observe instead of observeEvent because I want this to run
     # once when the app initalizes
+
     observe({
         input$addSwarm
         isolate({
@@ -78,7 +79,19 @@ shinyServer(function(input, output, session) {
     
     # process the output to human readable format
     finalOutput = reactive({
+        # this assignment must be above here. otherwise since initial return
+        # is the initial text the rest is ignored. It seems like dependency
+        # tree is created after a run. premature endings prevent some dependencies from
+        # getting registered
         swarmData = rolledSwarm()
+        isolate({
+            if(initialText()!=''){
+                text = initialText()
+                initialText('')
+                return(text)
+            }
+        })
+        
         if(!is.null(swarmData) && length(swarmData$hits) == 1 && swarmData$hits == -1){
             text = paste0("Maximum allowed swarm size is ",swarmLimit,"\n ")
         } else if(!is.null(swarmData) && length(swarmData$hits)>= 1){
