@@ -15,14 +15,14 @@ swarmUI = function(id){
     tagList(
         div(id = id,
             wellPanel(
-                textInput(ns('name'),'Swarm name',value = paste(id)),
-                shiny::selectInput(ns('monster'),label = 'Load SRD monster',choices = c('',monsterAttacks)),
                 fluidRow(
                     column(6,
+                           textInput(ns('name'),'Swarm name',value = paste(id)),
                            numericInput(ns('count'), 'Swarm size',min = 1,value = 1),
                            textInput(ns('damageDice'),'Damage dice',value = '1d6',placeholder = 'eg. 1d6+3')
                     ),
                     column(6,
+                           shiny::selectInput(ns('monster'),label = 'Load SRD monster',choices = c('',monsterAttacks)),
                            numericInput(ns('attackBonus'),'Attack bonus', min = 0, value = 0),
                            numericInput(ns('damageBonus'),'Damage bonus',min = 0, value = 0))
                 ),

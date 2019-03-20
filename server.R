@@ -26,10 +26,12 @@ shinyServer(function(input, output, session) {
     
     
     observeEvent(input$removeSwarm,{
-        removeUI(
-            selector = paste0("#swarm",swarmCount())
-        )
-        swarmCount(swarmCount()-1)
+        if(swarmCount() > 1){
+            removeUI(
+                selector = paste0("#swarm",swarmCount())
+            )
+            swarmCount(swarmCount()-1)
+        }
     })
     
     # get all swarm outputs
