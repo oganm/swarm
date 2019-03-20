@@ -80,7 +80,7 @@ shinyServer(function(input, output, session) {
     finalOutput = reactive({
         swarmData = rolledSwarm()
         if(!is.null(swarmData) && length(swarmData$hits) == 1 && swarmData$hits == -1){
-            text = glue::glue("Maximum allowed swarm size is {swarmLimit}\n \n ")
+            text = paste0("Maximum allowed swarm size is ",swarmLimit,"\n ")
         } else if(!is.null(swarmData) && length(swarmData$hits)>= 1){
             text = glue::glue('{swarmData$swarmName} attacks:\n',
                        length(swarmData$hits),' members hit for\n',
