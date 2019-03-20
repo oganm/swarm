@@ -1,7 +1,7 @@
 consoleUI = function(id){
     ns = NS(id)
     tagList(
-        verbatimTextOutput(ns('console'), placeholder = TRUE),
+        verbatimTextOutput(ns('console'), placeholder = TRUE) %>% withSpinner,
         tags$head(tags$style(glue::glue("#<ns('console')>{overflow-y:scroll;max-height: 400px}",.open = '<',.close = '>')))
     )
     
