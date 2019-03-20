@@ -2,7 +2,7 @@ consoleUI = function(id){
     ns = NS(id)
     tagList(
         verbatimTextOutput(ns('console'), placeholder = TRUE),
-        tags$head(tags$style(glue::glue("#<ns('console')>{overflow-y:scroll;max-height: 300px}",.open = '<',.close = '>')))
+        tags$head(tags$style(glue::glue("#<ns('console')>{overflow-y:scroll;max-height: 400px}",.open = '<',.close = '>')))
     )
     
 }

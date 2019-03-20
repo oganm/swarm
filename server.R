@@ -109,6 +109,6 @@ shinyServer(function(input, output, session) {
     })
 
     
-    callModule(console,'console',consoleLength = 60,finalOutput)
+    callModule(console,'console',consoleLength = 100,finalOutput)
     
 })
