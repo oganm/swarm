@@ -7,15 +7,21 @@ shinyServer(function(input, output, session) {
     swarmOuts = reactiveValues()
     previousButtonCounts = reactiveVal(list())
     
-    observeEvent(input$addSwarm,{
-        swarmCount(swarmCount()+1)
-        insertUI(
-            selector = "#addSwarm",
-            where = 'beforeBegin',
-            ui = swarmUI(paste0('swarm',swarmCount()))
-        )
-        
-        swarmOuts[[as.character(swarmCount())]] = callModule(swarm,id = paste0('swarm',swarmCount()))
+    # observe instead of observeEvent because I want this to run
+    # once when the app initalizes
+    observe({
+        input$addSwarm
+        isolate({
+            swarmCount(swarmCount()+1)
+            insertUI(
+                selector = "#addSwarm",
+                where = 'beforeBegin',
+                ui = swarmUI(paste0('swarm',swarmCount()))
+            )
+            
+            swarmOuts[[as.character(swarmCount())]] = callModule(swarm,id = paste0('swarm',swarmCount()))
+        })
+
     })
     
     
@@ -33,48 +39,51 @@ shinyServer(function(input, output, session) {
         })    
     })
     
+    # this is there to prevent returning anything if 
+    # a new swarm is added instead of an attack button press
+    swarmButtonCount = reactiveVal(0)
+    
+    # decide which attack button is pressed and send the correct output 
+    # for processing
     rolledSwarm = reactive({
         swarms = swarmOut()
         isolate({
-            browser()
-            buttonCounts = swarms %>% purrr::map('buttonCount')
-            names(buttonCounts) = seq_along(buttonCounts)
-            previousButtons = previousButtonCounts()
-            whichButton = seq_along(buttonCounts) %>% sapply(function(i){
-                i = as.character(i)
-                (!is.null(buttonCounts[[i]]) && !is.null(previousButtons[[i]]) && buttonCounts[[i]]>previousButtons[[i]]) || (!is.null(buttonCounts[[i]]) && is.null(previousButtons[[i]]) && buttonCounts[[i]]>0)
-            }) %>% as.logical()
-            
-            previousButtonCounts(buttonCounts)
-            print(which(whichButton))
-            # print(swarms)
-            if(sum(whichButton) == 1){
-                return(swarms[[which(whichButton)]])
+            # if this is triggered because add swarm button is pressed, ignore
+            if(input$addSwarm == swarmButtonCount()){
+                buttonCounts = swarms %>% purrr::map('buttonCount')
+                names(buttonCounts) = seq_along(buttonCounts)
+                previousButtons = previousButtonCounts()
+                whichButton = seq_along(buttonCounts) %>% sapply(function(i){
+                    i = as.character(i)
+                    (!is.null(buttonCounts[[i]]) && !is.null(previousButtons[[i]]) && buttonCounts[[i]]>previousButtons[[i]]) || (!is.null(buttonCounts[[i]]) && is.null(previousButtons[[i]]) && buttonCounts[[i]]>0)
+                }) %>% as.logical()
+                
+                previousButtonCounts(buttonCounts)
+                # print(which(whichButton))
+                # print(swarms)
+                if(sum(whichButton) == 1){
+                    return(swarms[[which(whichButton)]])
+                } else{
+                    return(NULL)
+                }
             } else{
+                swarmButtonCount(input$addSwarm)
                 return(NULL)
             }
         })
 
     })
     
-    # observe({
-    #     swarmData = rolledSwarm()
-    #     browser()
-    #     
-    #     
-    #     
-    # })
-    
-    
+    # process the output to human readable format
     finalOutput = reactive({
         swarmData = rolledSwarm()
         if(!is.null(swarmData) && length(swarmData$hits)>= 1){
             text = glue::glue('{swarmData$swarmName} attacks:\n',
                        length(swarmData$hits),' members hit for\n',
                        paste(swarmData$hits,collapse= ', '),' damage\n',
-                       'A total of {sum(swarmData$hits)}')
-        } else if(!is.null(swarmData) && length(swarmData$hits == 0)){
-            text = glue::glue("{swarmData$swarmName} attacks:\nEveryone missed")
+                       'A total of {sum(swarmData$hits)}\n \n ')
+        } else if(!is.null(swarmData) && length(swarmData$hits) == 0){
+            text = glue::glue("{swarmData$swarmName} attacks:\nEveryone missed\n \n ")
         } else{
             text = ''
         }

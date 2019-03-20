@@ -18,9 +18,9 @@ shinyUI(fluidPage(
     fluidRow(
         column(4,
                actionButton('addSwarm',label = 'Add swarm'),
-               actionButton('removeSwarm', label = 'Remove swarm'),
-               actionButton('consoleTest',label = 'test')),
+               actionButton('removeSwarm', label = 'Remove swarm')),
         column(8,
+               br(),
                div(consoleUI('console'),
                    class="affix",
                    style="width:50%"
