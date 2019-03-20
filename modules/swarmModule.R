@@ -71,6 +71,12 @@ swarm = function(input,output,session){
                              "Norm" = "N",
                              "Adv"= "A")
                 
+                if(input$count > swarmLimit){
+                    return(list(hits = -1,
+                         swarmName = input$name,
+                         buttonCount = as.integer(input$attack)))
+                }
+                
                 hits = diceSyntax::swarm(
                     AC = input$AC,
                     count = input$count,
