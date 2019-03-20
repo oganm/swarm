@@ -1,4 +1,33 @@
-monsterAttacks = monsters %>% purrr::map('actions') %>% purrr::map(monsteR:::attackable) %>% unlist %>% unname
+monsters$`Animate Objects` =
+    list(actions = 
+             list(
+                 'Tiny' = list(
+                     attack_bonus = 8,
+                     damage_dice = '1d4',
+                     damage_bonus = 5,
+                     default_count = 10),
+                 'Small' = list(
+                     attack_bonus = 6,
+                     damage_dice = '1d8',
+                     damage_bonus = 2,
+                     default_count = 10),
+                 "Medium" = list(
+                     attack_bonus = 5,
+                     damage_dice = '2d6',
+                     damage_bonus = 1,
+                     default_count = 5),
+                 "Large" = list(
+                     attack_bonus = 6,
+                     damage_dice = '2d10',
+                     damage_bonus = 2,
+                     default_count = 2),
+                 "Huge" = list(
+                     damage_bonus = 8,
+                     damage_dice = '2d12',
+                     damage_bonus = 4)
+                 )
+             )
+
 
 seq_along(monsters) %>% lapply(function(i){
     validAttacks = monsteR:::attackable(monsters[[i]]$actions)
@@ -8,7 +37,7 @@ seq_along(monsters) %>% lapply(function(i){
     } else{
         return(NULL)
     }
-}) %>% unlist -> monsterAttacks
+}) %>% unlist %>% sort -> monsterAttacks
 
 swarmUI = function(id){
     ns = NS(id)
@@ -55,6 +84,9 @@ swarm = function(input,output,session){
             updateNumericInput(session,'damageDice',value =attack$damage_dice)
             updateNumericInput(session,'attackBonus',value=attack$attack_bonus)
             updateNumericInput(session,'damageBonus',value= attack$damage_bonus)
+            if(!is.null(attack$default_count)){
+                updateNumericInput(session,'count',value=attack$default_count)
+            }
         }
     })
     
