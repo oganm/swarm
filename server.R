@@ -6,7 +6,7 @@ shinyServer(function(input, output, session) {
     
     swarmOuts = reactiveValues()
     previousButtonCounts = reactiveVal(list())
-    initialText = reactiveVal('Written by Ogan Mancarci\nSource code at github.com/oganm/swarm\nMonster data is released by Wizards of the Coast\nunder open game license\nData is translated into JSON format by Walter Kammerer\n ')
+    initialText = reactiveVal('Written by Ogan Mancarci\nSource code at github.com/oganm/swarm\nMonster data is released by Wizards of the Coast under open game license\nData is translated into JSON format by Walter Kammerer\n ')
     # observe instead of observeEvent because I want this to run
     # once when the app initalizes
 
