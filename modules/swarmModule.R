@@ -52,8 +52,8 @@ swarmUI = function(id){
                     ),
                     column(6,
                            shiny::selectInput(ns('monster'),label = 'Load SRD monster',choices = c('',monsterAttacks)),
-                           numericInput(ns('attackBonus'),'Attack bonus', min = 0, value = 0),
-                           numericInput(ns('damageBonus'),'Damage bonus',min = 0, value = 0))
+                           numericInput(ns('attackBonus'),'Attack bonus', value = 0),
+                           numericInput(ns('damageBonus'),'Damage bonus', value = 0))
                 ),
                 shinyWidgets::radioGroupButtons(inputId = ns('advantage'),
                                                 choices = c('DisAdv','Norm','Adv'),
@@ -71,7 +71,7 @@ swarmUI = function(id){
     )
 }
 
-swarm = function(input,output,session){
+swarm = function(input,output,session,swarmLimit = 1000){
     
     observeEvent(input$monster,{
         if(input$monster !=''){
@@ -79,9 +79,15 @@ swarm = function(input,output,session){
             monster_attack = input$monster %>% strsplit('/') %>% {.[[1]]}
             
             attack = monsters[[monster_attack[1]]]$actions[[monster_attack[2]]]
+            if(is.null(attack$damage_bonus)){
+                attack$damage_bonus = 0
+            }
+            if(is.null(attack$attack_bonus)){
+                attack$attack_bonus = 0
+            }
 
-            updateTextInput(session,'name',value= monster_attack[1])
-            updateNumericInput(session,'damageDice',value =attack$damage_dice)
+            updateTextInput(session,'name',value= glue::glue('{monster_attack[1]} ({monster_attack[2]})'))
+            updateTextInput(session,'damageDice',value =attack$damage_dice)
             updateNumericInput(session,'attackBonus',value=attack$attack_bonus)
             updateNumericInput(session,'damageBonus',value= attack$damage_bonus)
             if(!is.null(attack$default_count)){

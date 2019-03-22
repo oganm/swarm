@@ -6,16 +6,17 @@ shinyUI(fluidPage(
     shiny::includeCSS('www/style.css'),
     theme = shinythemes::shinytheme('cosmo'),
     titlePanel("D&D swarm simulator"),
-    fluidRow(
-        column(4,
-               actionButton('addSwarm',label = 'Add swarm'),
-               actionButton('removeSwarm', label = 'Remove swarm')),
-        column(8,
-               br(),
-               div(consoleUI('console'),
-                   class="affix",
-                   style="width:50%"
-                   ))
-    )
+    shinyjs::hidden(div(id = 'main_content',
+        fluidRow(
+            column(4,
+                   actionButton('addSwarm',label = 'Add swarm'),
+                   actionButton('removeSwarm', label = 'Remove swarm')),
+            column(8,
+                   br(),
+                   div(consoleUI('console'),
+                       class="affix"
+                   )))
+        ))
+
  
 ))

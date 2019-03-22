@@ -1,8 +1,13 @@
 library(shiny)
-library(monsteR)
-library(diceSyntax)
+library(monsteR) # github.com/oganm/monseR
+library(diceSyntax) # github.com/oganm/diceSyntax
 library(magrittr)
 library(shinycssloaders)
+library(shinyjs)
+library(purrr)
+library(glue)
+library(shinyWidgets)
+library(shinythemes)
 
 source('modules/consoleModule.R')
 source('modules/swarmModule.R')

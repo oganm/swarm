@@ -20,9 +20,11 @@ shinyServer(function(input, output, session) {
                 ui = swarmUI(paste0('swarm',swarmCount()))
             )
             
-            swarmOuts[[as.character(swarmCount())]] = callModule(swarm,id = paste0('swarm',swarmCount()))
+            swarmOuts[[as.character(swarmCount())]] = callModule(swarm,id = paste0('swarm',swarmCount()),swarmLimit = swarmLimit)
         })
-
+        shinyjs::show('main_content')
+        
+        
     })
     
     

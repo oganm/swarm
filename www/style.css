@@ -1,5 +1,12 @@
 @media (max-width: 767px) {
     .affix {
         position: static;
+        width: 100%;
+    }
+}
+
+@media (min-width: 768px) {
+    .affix {
+        width: 50%;
     }
 }
