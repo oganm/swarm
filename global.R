@@ -8,6 +8,7 @@ library(purrr)
 library(glue)
 library(shinyWidgets)
 library(shinythemes)
+library(shinyBS)
 
 source('modules/consoleModule.R')
 source('modules/swarmModule.R')
