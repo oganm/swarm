@@ -5,26 +5,31 @@ monsters$`Animate Objects` =
                      attack_bonus = 8,
                      damage_dice = '1d4',
                      damage_bonus = 5,
-                     default_count = 10),
+                     default_count = 10,
+                     saves = c(Str = -3, Dex = 4, Con = 0, Int = -4, Wis = -4, Cha = -5)),
                  'Small' = list(
                      attack_bonus = 6,
                      damage_dice = '1d8',
                      damage_bonus = 2,
-                     default_count = 10),
+                     default_count = 10,
+                     saves = c(Str = -2, Dex = 3, Con = 0, Int = -4, Wis = -4, Cha = -5)),
                  "Medium" = list(
                      attack_bonus = 5,
                      damage_dice = '2d6',
                      damage_bonus = 1,
-                     default_count = 5),
+                     default_count = 5,
+                     saves = c(Str = 0, Dex = 2, Con = 0, Int = -4, Wis = -4, Cha = -5)),
                  "Large" = list(
                      attack_bonus = 6,
                      damage_dice = '2d10',
                      damage_bonus = 2,
-                     default_count = 2),
+                     default_count = 2,
+                     saves = c(Str = 2, Dex = 0, Con = 0, Int = -4, Wis = -4, Cha = -5)),
                  "Huge" = list(
                      damage_bonus = 8,
                      damage_dice = '2d12',
-                     damage_bonus = 4)
+                     damage_bonus = 4,
+                     saves = c(Str = 4, Dex = -2, Con = 0, Int = -4, Wis = -4, Cha = -5))
                  )
              )
 
@@ -65,13 +70,34 @@ swarmUI = function(id){
                     column(6,
                            br(),
                            actionButton(ns('attack'),'Attack!'))
-                    )
+                    ),
+                fluidRow(
+                    column(6,
+                           numericInput(ns('DC'), 'Save DC',value = 10,min = 0)),
+                    column(6,
+                           br(),
+                           actionButton(ns('save'),'Save'),
+                           dropdownButton(strong('Saves'),
+                                          checkboxInput(ns('detailed'),label = 'Return details?',value = TRUE),
+                                          numericInput(ns('str-save'), 'Str',value = 0,min = 0),
+                                          numericInput(ns('dex-save'), 'Dex',value = 0,min = 0),
+                                          numericInput(ns('con-save'), 'Con',value = 0,min = 0),
+                                          numericInput(ns('int-save'), 'Int',value = 0,min = 0),
+                                          numericInput(ns('wis-save'), 'Wis',value = 0,min = 0),
+                                          numericInput(ns('cha-save'), 'Cha',value = 0,min = 0),
+                                          size = 'xs', icon = icon('ellipsis-h'),
+                                          width = '30px',
+                                          right = FALSE,
+                                          inline = TRUE))
+                )
             )
         )
     )
 }
 
 swarm = function(input,output,session,swarmLimit = 1000){
+    
+    finalOut = reactiveVal()
     
     observeEvent(input$monster,{
         if(input$monster !=''){
@@ -90,6 +116,16 @@ swarm = function(input,output,session,swarmLimit = 1000){
             updateTextInput(session,'damageDice',value =attack$damage_dice)
             updateNumericInput(session,'attackBonus',value=attack$attack_bonus)
             updateNumericInput(session,'damageBonus',value= attack$damage_bonus)
+            
+
+            updateNumericInput(session,'str-save',value= unname(monsters[[monster_attack[1]]]$saves['Str']))
+            updateNumericInput(session,'dex-save',value= unname(monsters[[monster_attack[1]]]$saves['Dex']))
+            updateNumericInput(session,'con-save',value= unname(monsters[[monster_attack[1]]]$saves['Con']))
+            updateNumericInput(session,'int-save',value= unname(monsters[[monster_attack[1]]]$saves['Int']))
+            updateNumericInput(session,'wis-save',value= unname(monsters[[monster_attack[1]]]$saves['Wis']))
+            updateNumericInput(session,'cha-save',value= unname(monsters[[monster_attack[1]]]$saves['Cha']))
+            
+            
             if(!is.null(attack$default_count)){
                 updateNumericInput(session,'count',value=attack$default_count)
             }
@@ -125,11 +161,47 @@ swarm = function(input,output,session,swarmLimit = 1000){
                 
                 list(hits = hits,
                      swarmName = input$name,
-                     buttonCount = as.integer(input$attack))
+                     buttonCount = as.integer(input$attack) + as.integer(input$save))
             }
  
         })
     })
     
-    return(out)
+    observeEvent(out(),{
+        finalOut(out())
+    })
+    
+    out2 = reactive({
+        input$save
+        isolate({
+            if(!is.null(input$save) && input$save>0){
+                
+
+                rolls = roll(glue::glue('{input$count}d20'),returnRolls = TRUE)[[1]]$dice
+                
+                
+                return(list(saves = rolls,
+                            swarmName = input$name,
+                            passes = list(
+                                Str = which((rolls + input$`str-save`) >= input$DC),
+                                Dex = which((rolls + input$`dex-save`) >= input$DC),
+                                Con = which((rolls + input$`con-save`) >= input$DC),
+                                Int = which((rolls + input$`int-save`) >= input$DC),
+                                Wis = which((rolls + input$`wis-save`) >= input$DC),
+                                Cha = which((rolls + input$`cha-save`) >= input$DC)
+                            ),
+                            detailed = input$detailed,
+                            buttonCount = as.integer(input$attack) + as.integer(input$save)))
+
+            }
+           
+        })
+    })
+    
+    observeEvent(out2(),{
+
+        finalOut(out2())
+    })
+    
+    return(finalOut)
 }

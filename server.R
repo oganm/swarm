@@ -93,19 +93,44 @@ shinyServer(function(input, output, session) {
                 return(text)
             }
         })
-        
-        if(!is.null(swarmData) && length(swarmData$hits) == 1 && swarmData$hits == -1){
-            text = paste0("Maximum allowed swarm size is ",swarmLimit,"\n ")
-        } else if(!is.null(swarmData) && length(swarmData$hits)>= 1){
-            text = glue::glue('{swarmData$swarmName} attacks:\n',
-                       length(swarmData$hits),' members hit for\n',
-                       paste(swarmData$hits,collapse= ', '),' damage\n',
-                       'A total of {sum(swarmData$hits)}\n \n ')
-        } else if(!is.null(swarmData) && length(swarmData$hits) == 0){
-            text = glue::glue("{swarmData$swarmName} attacks:\nEveryone missed\n \n ")
-        } else{
+        if(!is.null(swarmData) && names(swarmData)[[1]] == 'hits'){
+            if(!is.null(swarmData) && length(swarmData$hits) == 1 && swarmData$hits == -1){
+                text = paste0("Maximum allowed swarm size is ",swarmLimit,"\n ")
+            } else if(!is.null(swarmData) && length(swarmData$hits)>= 1){
+                text = glue::glue('{swarmData$swarmName} attacks:\n',
+                                  length(swarmData$hits),' members hit for\n',
+                                  paste(swarmData$hits,collapse= ', '),' damage\n',
+                                  'A total of {sum(swarmData$hits)}\n \n ')
+            } else if(!is.null(swarmData) && length(swarmData$hits) == 0){
+                text = glue::glue("{swarmData$swarmName} attacks:\nEveryone missed\n \n ")
+            } else{
+                text = ''
+            }
+        } else if(!is.null(swarmData) && names(swarmData)[[1]] == 'saves'){
+            if(swarmData$detailed){
+                text = glue::glue('{swarmData$swarmName} rolls saves:\n',
+                                  'Rolls: {paste(swarmData$saves,collapse = ", ")}\n',
+                                  'Str: {length(swarmData$passes$Str)} passes; {paste(swarmData$passes$Str, collapse = ", ")}\n',
+                                  'Dex: {length(swarmData$passes$Dex)} passes; {paste(swarmData$passes$Dex, collapse = ", ")}\n',
+                                  'Con: {length(swarmData$passes$Con)} passes; {paste(swarmData$passes$Con, collapse = ", ")}\n',
+                                  'Int: {length(swarmData$passes$Int)} passes; {paste(swarmData$passes$Int, collapse = ", ")}\n',
+                                  'Wis: {length(swarmData$passes$Wis)} passes; {paste(swarmData$passes$Wis, collapse = ", ")}\n',
+                                  'Cha: {length(swarmData$passes$Cha)} passes; {paste(swarmData$passes$Cha, collapse = ", ")}\n')
+            }else{
+                text = glue::glue('{swarmData$swarmName} rolls saves:\n',
+                           'Str: {length(swarmData$passes$Str)} passes\n',
+                           'Dex: {length(swarmData$passes$Dex)} passes\n',
+                           'Con: {length(swarmData$passes$Con)} passes\n',
+                           'Int: {length(swarmData$passes$Int)} passes\n',
+                           'Wis: {length(swarmData$passes$Wis)} passes\n',
+                           'Cha: {length(swarmData$passes$Cha)} passes\n')
+            }
+            
+
+        }else{
             text = ''
         }
+
         
         return(text)
     })
