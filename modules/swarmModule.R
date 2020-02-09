@@ -26,9 +26,9 @@ monsters$`Animate Objects` =
                      default_count = 2,
                      saves = c(Str = 2, Dex = 0, Con = 0, Int = -4, Wis = -4, Cha = -5)),
                  "Huge" = list(
-                     damage_bonus = 8,
+                     attack_bonus = 8,
                      damage_dice = '2d12',
-                     damage_bonus = 4,
+                     damage_bonus = 2,
                      saves = c(Str = 4, Dex = -2, Con = 0, Int = -4, Wis = -4, Cha = -5))
                  )
              )
