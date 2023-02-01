@@ -4,7 +4,7 @@ monsters$`Animate Objects` =
                  'Tiny' = list(
                      attack_bonus = 8,
                      damage_dice = '1d4',
-                     damage_bonus = 5,
+                     damage_bonus = 4,
                      default_count = 10,
                      saves = c(Str = -3, Dex = 4, Con = 0, Int = -4, Wis = -4, Cha = -5)),
                  'Small' = list(
@@ -118,12 +118,23 @@ swarm = function(input,output,session,swarmLimit = 1000){
             updateNumericInput(session,'damageBonus',value= attack$damage_bonus)
             
 
-            updateNumericInput(session,'str-save',value= unname(monsters[[monster_attack[1]]]$saves['Str']))
-            updateNumericInput(session,'dex-save',value= unname(monsters[[monster_attack[1]]]$saves['Dex']))
-            updateNumericInput(session,'con-save',value= unname(monsters[[monster_attack[1]]]$saves['Con']))
-            updateNumericInput(session,'int-save',value= unname(monsters[[monster_attack[1]]]$saves['Int']))
-            updateNumericInput(session,'wis-save',value= unname(monsters[[monster_attack[1]]]$saves['Wis']))
-            updateNumericInput(session,'cha-save',value= unname(monsters[[monster_attack[1]]]$saves['Cha']))
+            if(monster_attack[[1]] == 'Animate Objects'){
+                updateNumericInput(session,'str-save',value= unname(monsters[[monster_attack[1]]]$actions[[monster_attack[[2]]]]$saves['Str']))
+                updateNumericInput(session,'dex-save',value= unname(monsters[[monster_attack[1]]]$actions[[monster_attack[[2]]]]$saves['Dex']))
+                updateNumericInput(session,'con-save',value= unname(monsters[[monster_attack[1]]]$actions[[monster_attack[[2]]]]$saves['Con']))
+                updateNumericInput(session,'int-save',value= unname(monsters[[monster_attack[1]]]$actions[[monster_attack[[2]]]]$saves['Int']))
+                updateNumericInput(session,'wis-save',value= unname(monsters[[monster_attack[1]]]$actions[[monster_attack[[2]]]]$saves['Wis']))
+                updateNumericInput(session,'cha-save',value= unname(monsters[[monster_attack[1]]]$actions[[monster_attack[[2]]]]$saves['Cha']))
+            } else{
+                updateNumericInput(session,'str-save',value= unname(monsters[[monster_attack[1]]]$saves['Str']))
+                updateNumericInput(session,'dex-save',value= unname(monsters[[monster_attack[1]]]$saves['Dex']))
+                updateNumericInput(session,'con-save',value= unname(monsters[[monster_attack[1]]]$saves['Con']))
+                updateNumericInput(session,'int-save',value= unname(monsters[[monster_attack[1]]]$saves['Int']))
+                updateNumericInput(session,'wis-save',value= unname(monsters[[monster_attack[1]]]$saves['Wis']))
+                updateNumericInput(session,'cha-save',value= unname(monsters[[monster_attack[1]]]$saves['Cha']))
+            }
+
+            
             
             
             if(!is.null(attack$default_count)){
